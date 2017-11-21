@@ -1,4 +1,5 @@
 'use strict';
+const path = require('path');
 
 module.exports = appInfo => {
   const config = exports = {};
@@ -8,6 +9,28 @@ module.exports = appInfo => {
 
   // add your config here
   config.middleware = [];
+
+  // view ejs engine config
+  config.view = {
+    mapping: {
+      '.ejs': 'ejs',
+    },
+  };
+
+  config.ejs = {
+    root: path.join(appInfo.baseDir, 'app/view'),
+    cache: true,
+    debug: false,
+    compileDebug: true,
+    delimiter: null,
+    strict: false,
+  };
+
+  // database config
+  config.mongoose = {
+    url: 'mongodb://127.0.0.1/rbac-example',
+    options: {},
+  };
 
   return config;
 };
