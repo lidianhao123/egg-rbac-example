@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>
+    <%=__(ctx.app.config.siteInfo.name)%>
+  </title>
+  <link rel="stylesheet" href="/public/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/public/css/admin.css">
+  <script type="text/javascript" src="/public/js/jquery-2.2.4.min.js"></script>
+  <script type="text/javascript" src="/public/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/public/js/navbar.js"></script>
+</head>
+
+<body>
+
+  <!-- 页面头部 start -->
+  <div class="main-header">
+    <a href="/" class="site-name">egg-rbac-example</a>
+    <a href="/logout" class="logout">退出</a>
+  </div>
+  <!-- 页面头部 end -->
+
+  <!-- 侧边栏 start -->
+  <div class="side-menu">
+    <% include sideMenu.ejs %>
+  </div>
+  <!-- 侧边栏 end -->
+
+  <!-- 主体内容 start -->
+  <div class="container-main">
+    <div class="side-body">
+      <div class="side-body-box">
+        <div class="panel panel-default">
+          <%- body %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 主体内容 end -->
+
+</body>
+</html>

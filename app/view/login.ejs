@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title><%=__(ctx.app.config.siteInfo.name)%>-登录</title>
+  <link rel="stylesheet" href="/public/bootstrap/dist/css/bootstrap.min.css">
+  <style>
+    html,body{width: 100%; height: 100%; position: absolute;}
+    body { background-color: #F8F8F8; }
+    .login-box{width: 400px; height: 250px; padding: 40px; border-radius: 10px; background-color: #fff; margin: auto; position: absolute; left:0; right: 0; top: 0; bottom: 0;}
+    .login-title{
+      font-size: 20px; text-align: center; margin-bottom: 20px;
+    }
+  </style>
+  <script type="text/javascript" src="/public/js/jquery-2.2.4.min.js"></script>
+  <script src="/public/bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div class="login-box">
+    <div class="login-title">用户登录</div>
+    <form class="form-horizontal" onsubmit="return false;">
+      <input type="hidden" name="_csrf" value="<%=ctx.csrf %>">
+      <div class="form-group">
+        <label for="inputEmail3" class="col-sm-2 control-label">账号</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="inputEmail3" placeholder="">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="inputPassword3" class="col-sm-2 control-label">密码</label>
+        <div class="col-sm-10">
+          <input type="password" class="form-control" id="inputPassword3" placeholder="">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default" style="width: 100%;">登录</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    $('.btn-default').on('click', function(){
+      login();
+    });
+
+    $(function(){
+      $('#inputEmail3').focus();
+    })
+
+    function login(){
+      var name = $('#inputEmail3').val(),
+        _csrf = $('input[name="_csrf"]').val(),
+        pw = $('#inputPassword3').val();
+      
+      if(name == '' || name == ' '){
+        alert('请输入账号');
+        return;
+      }
+
+      if(pw == '' || pw == ' '){
+        alert('请输入密码');
+        return;
+      }
+
+      $.ajax({
+        url: '/login',
+        type: 'POST',
+        data:{
+          name: name,
+          _csrf: _csrf,
+          password: pw 
+        },
+        success: function(data){
+          location.href = '/admin';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

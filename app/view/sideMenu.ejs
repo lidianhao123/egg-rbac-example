@@ -1,0 +1,13 @@
+<!-- Main Menu -->
+<div class="side-menu-container">
+  <ul class="nav navbar-nav">
+    <% ctx.app.config.nav.forEach(function(item, index){ %>
+      <% if(item.id === sideId){%>
+        <li><a href="<%= item.link%>" class="active"><span class="glyphicon <%= item.iconName%>"></span><%= item.name%></a></li>
+      <%} else{%>
+        <li><a href="<%= item.link%>"><span class="glyphicon <%= item.iconName%>"></span><%= item.name%></a></li>
+      <%}%>
+    <% }) %>
+  </ul>
+  <a href="/" target="_blank" class="btn btn-default btn-go-home">返回首页</a>
+</div>

@@ -1,0 +1,156 @@
+<div class="panel-heading">
+    <button id="btnNewUser" href="/admin/create" class="btn btn-success" style="width:82px; margin-right:10px;">新建</button>
+  </form>
+</div>
+<div class="panel-body">
+  <table class="table table-bordered table-hover table-self">
+    <thead>
+      <tr>
+        <th>序号</th>
+        <th>用户名</th>
+        <th>角色</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% users.forEach(function(user,index){ %>
+        <tr data-id="<%= user._id%>">
+          <td><%= index+1%></td>
+          <td><%= user.name%></td>
+          <td data-id="<%= user.role._id%>"><%= user.role.alias%></td>
+          <td class="operate">
+            <button class="btn btn-default btn-sm btn-modify" role="button">修改</button>
+          </td>
+        </tr>
+      <% }); %>
+      <% if(users.length === 0){%>
+        <tr>
+          <td colspan="4">暂无用户</td>
+        </tr>
+      <% }%>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalLabel">
+  <div class="modal-dialog" role="document" style="height: 414px; margin: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0; ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title text-center" id="newUserModalLabel">创建新用户</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" id="newActForm" onsubmit="return false;">
+          <input type="hidden" name="id">
+          <div class="form-group">
+            <label for="recipient-name" class="col-sm-2 control-label">用户名:</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="name">
+              <span class="help-block"></span>
+              <p class="js-error"></p>
+            </div>
+          </div>
+          <div class="form-group password-group">
+            <label for="recipient-name" class="col-sm-2 control-label">密码:</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="password">
+              <span class="help-block"></span>
+              <p class="js-error"></p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="recipient-name" class="col-sm-2 control-label">角色:</label>
+            <div class="col-sm-10">
+              <select class="form-control" name="role">
+                <option value="0" disabled="disabled" selected>请选择角色</option>
+                <% roles.forEach(function(role,index){ %>
+                  <option value="<%= role._id %>"><%= role.alias %></option>
+                <% }); %>
+              </select>
+              <p class="js-error"></p>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-save">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var $editLine = null;
+  //创建用户
+  $("#btnNewUser").on("click", function () {
+    $('input[name="name"]').val('');
+    $('select[name="role"]').val(0);
+    $('select[name="password"]').val('');
+    $('.password-group').show()
+    $('#newUserModalLabel').text('创建新用户');
+    $("#newUserModal").modal("show");
+  });
+
+  //修改用户信息
+  $('tbody').on("click", '.btn-modify', function () {
+    var $this = $(this),
+      $tr = $this.parents('tr'),
+      id = $tr.data('id'),
+      name = $tr.find('td:eq(1)').text(),
+      roleId = $tr.find('td:eq(2)').data('id');
+
+    $editLine = $tr;
+    console.info(id, name, roleId)
+    $('input[name="id"]').val(id);
+    $('input[name="name"]').val(name);
+    $('select[name="role"]').val(roleId);
+    $('.password-group').hide();
+    $('#newUserModalLabel').text('编辑用户');
+    $("#newUserModal").modal("show");
+  });
+
+  function addUser(user){
+    var $tbody = $('tbody');
+    var index = $tbody.find('tr').length + 1;
+    var html = '<tr data-id="' + user._id + '">\
+      <td>' + index + '</td>\
+      <td>' + user.name + '</td>\
+      <td data-id="' + user.role._id + '">' + user.role.alias + '</td>\
+      <td class="operate">\
+        <button class="btn btn-default btn-sm btn-modify" role="button">修改</button>\
+      </td>\
+    </tr>'
+    $tbody.append(html);
+  }
+
+  $('.btn-save').on('click', function(){
+    var name = $('input[name="name"]').val(),
+      roleId = $('select[name="role"]').val(),
+      password = $('input[name="password"]').val(),
+      id = $('input[name="id"]').val();
+    console.info(name, roleId, id)
+    $.ajax({
+      url: '/admin/article/new',
+      method: 'post',
+      data: {
+        _csrf: "<%= ctx.csrf %>",
+        id: id || "",
+        roleId: roleId,
+        password: password,
+        name: name
+      },
+      success: function(data){
+        console.info(data)
+        if(parseInt(data.code) === 200){
+          if($editLine){
+            $editLine.find('td:eq(1)').text(data.user.name),
+            $editLine.find('td:eq(2)').data('id', data.user.role._id).text(data.user.role.alias);
+          } else{
+            addUser(data.user);
+          }
+          $("#newUserModal").modal("hide");
+        }
+      }
+    })
+  })
+</script>

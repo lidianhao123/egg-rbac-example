@@ -1,0 +1,184 @@
+body {
+  background-color: #F8F8F8;
+}
+.main-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #475BF0;
+  z-index: 100;
+}
+.main-header .site-name{
+  font-size: 30px;
+  color: #fff;
+  float: left;
+  margin: 10px 0 0 20px;
+}
+.main-header .site-name:hover{
+  text-decoration: none;
+}
+.main-header .logout{
+  float: right;
+  margin-right: 20px;
+  height: 30px;
+  position: relative;
+  line-height: 30px;
+  top: 15px;
+  color: #fff;
+}
+.main-header .logo {
+  float: left;
+  margin-left: 51px;
+  position: relative;
+  top: 9px;
+  height: 42px;
+}
+.main-header .user-info {
+  float: right;
+  margin-right: 20px;
+  height: 30px;
+  position: relative;
+  line-height: 30px;
+  top: 15px;
+}
+.main-header .user-info .avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  float: left;
+}
+.main-header .user-info .name {
+  float: left;
+  color: #fff;
+  font-size: 14px;
+  margin-left: 10px;
+}
+.main-header .user-info .glyphicon-menu-down {
+  margin-left: 10px;
+  color: #fff;
+  cursor: pointer;
+}
+
+
+.side-menu {
+  position: fixed;
+  width: 240px;
+  height: 100%;
+  top: 60px;
+  background-color: #fff;
+  border-right: 1px solid #e7e7e7;
+}
+.side-menu .navbar-nav li {
+  display: block;
+  width: 100%;
+}
+.side-menu .navbar-nav a {
+  color: #333;
+  padding-left: 50px;
+  padding-right: 40px;
+  border-bottom: none;
+}
+.side-menu .navbar-nav a .glyphicon {
+  margin-right: 7px;
+  color: #BABABA;
+}
+.side-menu .navbar-nav a:hover,
+.side-menu .navbar-nav a.active {
+  color: #475BF0;
+}
+.side-menu .navbar-nav a:hover .glyphicon,
+.side-menu .navbar-nav a.active .glyphicon {
+  color: #475BF0;
+}
+.side-menu .navbar-nav a .arrow {
+  float: right;
+}
+.side-menu .navbar-nav a .arrow:before {
+  content: "\e114";
+}
+.side-menu .navbar-nav .collapsed .arrow:before {
+  content: "\e080";
+}
+.side-menu .panel-default {
+  border: 0;
+  margin-bottom: 0;
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
+.side-menu .panel-body {
+  padding: 0 0 0 25px;
+}
+.side-menu .btn-go-home {
+  display: block;
+  width: 140px;
+  float: left;
+  margin: 20px 0 0 50px;
+}
+.side-body {
+  margin-left: 240px;
+  padding-top: 60px;
+}
+.side-body .side-body-header {
+  height: 85px;
+  margin: 0 15px;
+}
+.side-body .side-body-box {
+  margin: 10px;
+  overflow: hidden;
+}
+.panel-self {
+  margin-bottom: 30px;
+}
+.panel-default > .panel-heading.panel-title {
+  border-left: 4px solid #475BF0;
+}
+.panel-default > .panel-heading.panel-title h5 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.panel-body-container {
+  width: 700px;
+  margin: 0 auto;
+}
+.panel-body-container:after {
+  content: " ";
+  display: table;
+  clear: both;
+}
+
+.table-self.table-bordered > thead > tr > th,
+.table-self.table-bordered > thead > tr > td {
+  border-bottom-width: 1px;
+}
+.table-self > thead > tr > th,
+.table-self > tbody > tr > th,
+.table-self > tfoot > tr > th,
+.table-self > thead > tr > td,
+.table-self > tbody > tr > td,
+.table-self > tfoot > tr > td {
+  text-align: center;
+  vertical-align: middle;
+}
+.table-self .self-avatar {
+  width: 30px;
+  height: 30px;
+  display: block;
+  margin: 0 auto;
+  border-radius: 100%;
+}
+.collect-item{
+  position: relative;
+  margin-bottom: 10px;
+}
+.collect-item:hover .delete-collect{
+  display: block;
+}
+.delete-collect{
+  position: absolute;
+  display: none;
+  right: -6px;
+  top: -7px;
+}
