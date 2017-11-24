@@ -21,6 +21,10 @@
   <div class="main-header">
     <a href="/" class="site-name">egg-rbac-example</a>
     <a href="/logout" class="logout">退出</a>
+    <div class="user-info">
+      <span class="name">用户：<%= ctx.session.user.name%></span>
+      <span class="name">角色：<%= ctx.role.roleName%></span>
+    </div>
   </div>
   <!-- 页面头部 end -->
 

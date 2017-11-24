@@ -53,7 +53,7 @@
           <div class="form-group password-group">
             <label for="recipient-name" class="col-sm-2 control-label">密码:</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="password">
+              <input type="password" class="form-control" name="password">
               <span class="help-block"></span>
               <p class="js-error"></p>
             </div>
@@ -130,7 +130,7 @@
       id = $('input[name="id"]').val();
     console.info(name, roleId, id)
     $.ajax({
-      url: '/admin/article/new',
+      url: '/admin/user/new',
       method: 'post',
       data: {
         _csrf: "<%= ctx.csrf %>",
