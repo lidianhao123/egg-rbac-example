@@ -27,7 +27,7 @@ module.exports = app => {
       yield this.ctx.render('index.ejs', { sideId: 1 }, viewOptions);
     }
 
-    * newArticle() {
+    * newUser() {
       const ctx = this.ctx;
       const body = ctx.request.body;
       try {
@@ -66,7 +66,43 @@ module.exports = app => {
     }
 
     * setting() {
-      yield this.ctx.render('setting.ejs', { sideId: 5 }, viewOptions);
+      const roles = yield app.rbac.getAllRoles();
+      const permissions = yield app.rbac.getAllPermission();
+      yield this.ctx.render('setting.ejs', { sideId: 5, roles, permissions }, viewOptions);
+    }
+
+    * modifyPermissions() {
+      const ctx = this.ctx;
+      const body = ctx.request.body;
+
+      if (body.removeArr && body.removeArr.length > 0) {
+        yield app.rbac.removePermissions(body.id, body.removeArr);
+      }
+      if (body.addArr && body.addArr.length > 0) {
+        yield app.rbac.addPermission(body.id, body.addArr);
+      }
+      ctx.body = {
+        code: 200,
+        msg: 'success',
+      };
+    }
+
+    * newRole() {
+      const ctx = this.ctx;
+      const body = ctx.request.body;
+
+      const role = yield app.rbac.newRole({ name: body.name, alias: body.alias, grants: [] });
+      if (role === null) {
+        ctx.body = {
+          code: 501,
+          msg: '角色简称已存在',
+        };
+      }
+      ctx.body = {
+        code: 200,
+        msg: 'success',
+        role,
+      };
     }
 
     // render login page
@@ -85,16 +121,22 @@ module.exports = app => {
         return;
       }
       const flag = yield ctx.service.user.authUser(ctx.request.body);
-      console.info('flag', flag);
       if (flag) {
         const user = yield ctx.service.user.findOne(ctx.request.body.name);
-        console.info('flag', ctx.request.body.name, user.role.name);
-        this.ctx.session.user = user;
+        // console.info('flag', ctx.request.body.name, user.role.name);
+        this.ctx.session.user = {
+          name: user.name,
+          role: {
+            name: user.role.name,
+          },
+        };
+        this.logger.info('login success, session.user is ', this.ctx.session.user);
         ctx.body = {
           code: 200,
           msg: '登录成功',
         };
       } else {
+        this.logger.info('login failure, user name is %s', ctx.request.body.name);
         ctx.body = {
           code: 201,
           msg: '账号或密码错误',
@@ -103,11 +145,9 @@ module.exports = app => {
     }
 
     // logout API
-    * logoutAPI() {
-      // this.ctx.session.userid = null;
-      // this.ctx.session.roleName = null;
-      this.ctx.session = null; // egg-rbac bug 临时使用
-      this.ctx.body = 'logout success';
+    * logout() {
+      this.ctx.session.user = null;
+      this.ctx.redirect('/login');
     }
   }
   return AdminController;

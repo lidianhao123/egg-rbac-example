@@ -1,3 +1,276 @@
 <div class="panel-body">
-  
+  <div class="container">
+    <div class="form-horizontal">
+      <div class="form-group">
+        <label for="recipient-name" class="col-sm-2 control-label">角色:</label>
+        <div class="col-sm-4">
+          <select class="form-control" name="role">
+            <option value="0" disabled="disabled" selected>请选择角色</option>
+            <% roles.forEach(function(role,index){ %>
+              <option value="<%= role._id %>"><%= role.alias %></option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-sm-6">
+          <button class="btn btn-success btn-create-role" style="width:82px; margin-right:10px;">新建角色</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="recipient-name" class="col-sm-2 control-label">权限:</label>
+        <div class="col-sm-6">
+          <div class="row">
+            <div class="col-sm-6">
+              <table class="table table-bordered table-hover table-self">
+                <thead>
+                  <tr>
+                    <th style="text-align:left;">已拥有权限</th>
+                  </tr>
+                </thead>
+                <tbody id="ownPermissions">
+                  
+                </tbody>
+              </table>
+            </div>
+            <div class="col-sm-6">
+              <table class="table table-bordered table-hover table-self">
+                <thead>
+                  <tr>
+                    <th style="text-align:left;">未拥有权限</th>
+                  </tr>
+                </thead>
+                <tbody id="unOwnPermissions">
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <button class="btn btn-success btn-modify" style="width:82px; margin-right:10px;">编辑权限</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+
+<div class="modal fade" id="newRoleModal" tabindex="-1" role="dialog" aria-labelledby="newRoleModalLabel">
+    <div class="modal-dialog" role="document" style="height: 414px; margin: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0; ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title text-center" id="newRoleModalLabel">创建角色</h4>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal" id="newActForm" onsubmit="return false;">
+            <input type="hidden" name="id">
+            <div class="form-group">
+              <label for="recipient-name" class="col-sm-2 control-label">简称:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="name" placeholder="请输入英文或者拼音">
+                <span class="help-block"></span>
+                <p class="js-error"></p>
+              </div>
+            </div>
+            <div class="form-group password-group">
+              <label for="recipient-name" class="col-sm-2 control-label">名称:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="alias">
+                <span class="help-block"></span>
+                <p class="js-error"></p>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-save">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  var allPermissions = <%- JSON.stringify(permissions)%>;
+  var roles = <%- JSON.stringify(roles)%>;
+  var ownPermissions, unOwnPermissions, backPermission, curRole;
+  var $selectRole = $('select[name="role"]');
+  var $ownTable = $('#ownPermissions');
+  var $unOwnTable = $('#unOwnPermissions');
+  var $btnModify = $('.btn-modify');
+  var isModifyMode = false;
+
+  function createLine(data){
+    const replaceObj = {
+      '[ID]': data._id,
+      '[ALIAS]': data.alias,
+    }
+    return '<tr data-id="[ID]"><td style="text-align:left; cursor:pointer;">[ALIAS]</td></tr>'.replace(/\[ID\]|\[ALIAS\]/ig, function(all){
+      return replaceObj[all];
+    })
+  }
+
+  function createLines(data){
+    var html = ''
+    data.forEach(function(item){
+      html += createLine(item);
+    });
+    return html
+  }
+
+  function updatePermisionTable(ownData, unOwnData){
+    $ownTable.html(createLines(ownData));
+    $unOwnTable.html(createLines(unOwnData));
+  }
+
+  function tranferArr(id, fromArr, toArr){
+    toArr.push(fromArr.splice(fromArr.findIndex(function(item){
+      return item._id === id;
+    }),1)[0]);
+  }
+
+  function initPermissionData(grants){
+    backPermission = [];
+    ownPermissions = [];
+    unOwnPermissions = [];
+    allPermissions.forEach(function(item){
+      if(grants.indexOf(item._id) > -1){
+        ownPermissions.push(item);
+        backPermission.push(item);//backup old permissions
+      } else{
+        unOwnPermissions.push(item);
+      }
+    });
+  }
+
+  function toIdArr(arr){
+    return arr.map(function(item){
+      return item._id;
+    })
+  }
+
+  function saveModify(backArr, newArr){
+    var addArr = [], removeArr = [].concat(backArr), newGrants = [];
+    newArr.forEach(function(item){
+      newGrants.push(item._id);
+      var index = removeArr.findIndex(function(subitem){
+        return subitem._id === item._id;
+      });
+      if(index === -1){
+        addArr.push(item);
+      } else{//exist in both array remove from addArr
+        removeArr.splice(index,1);
+      }
+    });
+    removeArr = toIdArr(removeArr);
+    addArr = toIdArr(addArr);
+    console.info(removeArr,addArr,newGrants);
+    return {
+      removeArr: removeArr,
+      addArr: addArr,
+      newGrants: newGrants
+    }
+  }
+
+  function fetchModify(removeArr, addArr, role, cb, error){
+    $.ajax({
+      url: '/admin/setting/modify',
+      method: 'post',
+      data: {
+        _csrf: "<%= ctx.csrf %>",
+        removeArr: removeArr,
+        addArr: addArr,
+        id: role._id
+      },
+      success: function(data){
+        console.info('data = ', data);
+        if(parseInt(data.code) === 200){
+          cb()
+        } else{
+          error();
+        }
+      },
+      error: function(){
+        error();
+      }
+    })
+  }
+
+  //选择角色
+  $selectRole.on('change', function(data){
+    // console.info($selectRole.val(),data);
+    var roleId = $selectRole.val();
+    curRole = roles.find(function(item){
+      return item._id === roleId;
+    });
+    console.info(curRole);
+    initPermissionData(curRole.grants);
+    updatePermisionTable(ownPermissions, unOwnPermissions);
+  });
+
+  //点击拥有权限列表
+  $ownTable.on('click', 'tr', function(){
+    if(isModifyMode){
+      var $this = $(this);
+      var permissionId = $this.data('id');
+      tranferArr(permissionId, ownPermissions, unOwnPermissions);
+      updatePermisionTable(ownPermissions, unOwnPermissions);
+    }
+  });
+  //点击未拥有权限列表
+  $unOwnTable.on('click', 'tr', function(){
+    if(isModifyMode){
+      var $this = $(this);
+      var permissionId = $this.data('id');
+      tranferArr(permissionId, unOwnPermissions, ownPermissions);
+      updatePermisionTable(ownPermissions, unOwnPermissions);
+    }
+  });
+
+  //
+  $btnModify.on('click', function(){
+    if(!curRole) return;
+
+    if(!isModifyMode){//enter modify mode
+      isModifyMode = true;
+      $btnModify.text('保存');
+      $selectRole.prop('disabled',true);
+    } else{//exit modify mode
+      isModifyMode = false;
+      $btnModify.text('编辑权限');
+      $selectRole.prop('disabled',false);
+      var result = saveModify(backPermission, ownPermissions);
+      fetchModify(result.removeArr, result.addArr, curRole, function(){
+        curRole.grants = result.newGrants;
+      }, function(){
+        console.error('修改失败')
+      });
+    }
+  });
+
+  $('.btn-create-role').on('click', function(){
+    $("#newRoleModal").modal("show");
+  })
+
+  $('.btn-save').on('click', function(){
+    var name = $('input[name="name"]').val(),
+    alias = $('input[name="alias"]').val();
+
+    $.ajax({
+      url: '/admin/setting/newrole',
+      method: 'post',
+      data: {
+        _csrf: "<%= ctx.csrf %>",
+        alias: alias,
+        name: name
+      },
+      success: function(data){
+        console.info(data)
+        if(parseInt(data.code) === 200){
+          
+        } else{
+          alert(data.msg);
+        }
+      }
+    })
+  })
+</script>

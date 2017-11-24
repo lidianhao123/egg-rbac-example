@@ -1,18 +1,46 @@
 'use strict';
 
+/**
+ * middleware for check permission
+ * @param {boolean} isAPI undefined or truely
+ * @return {function} generate function
+ */
+function can(isAPI) {
+  return function* (next) {
+    console.info(this.request.url);
+    // this is instance of Context
+    if (this.role && this.role.can && this.role.can(this.request.url)) {
+      yield next;
+    } else {
+      // https://tools.ietf.org/html/rfc2616#page-66
+      // this.status = 401; // 'Unauthorized'
+      if (isAPI) {
+        this.body = {
+          code: 401,
+          msg: 'no permission',
+        };
+      } else {
+        this.redirect('/login');
+      }
+    }
+  };
+}
+
 module.exports = app => {
-  app.get('/test', 'home.test');
-  app.get('/init', 'home.init');
-  app.get('/admin', app.rbac.can('query_article'), 'home.index');
-  app.get('/admin/article', app.rbac.can('query_article'), 'home.index');
-  app.post('/admin/article/new', app.rbac.can('query_article'), 'home.newArticle');
-  app.get('/admin/tag', app.rbac.can('query_tag'), 'home.tag');
-  app.get('/admin/collect', app.rbac.can('query_collect'), 'home.collect');
-  app.get('/admin/user', app.rbac.can('query_user'), 'home.user');
-  app.get('/admin/setting', app.rbac.can('query_setting'), 'home.setting');
+  app.router.get('/test', 'home.test');
+  app.router.get('/init', 'home.init');
+  app.router.redirect('/', '/admin', 302);
+  app.router.get('/admin', can(), 'home.index');
+  app.router.get('/admin/tag', can(), 'home.tag');
+  app.router.get('/admin/collect', can(), 'home.collect');
+  app.router.get('/admin/user', can(), 'home.user');
+  app.router.post('/admin/user/new', can(true), 'home.newUser');
+  app.router.get('/admin/setting', can(), 'home.setting');
+  app.router.post('/admin/setting/modify', can(true), 'home.modifyPermissions');
+  app.router.post('/admin/setting/newrole', can(true), 'home.newRole');
 
   // 登录 or 登出
-  app.get('/login', 'home.login');
-  app.post('/login', 'home.loginAPI');
-  app.get('/logout', 'home.logoutAPI');
+  app.router.get('/login', 'home.login');
+  app.router.post('/login', 'home.loginAPI');
+  app.router.get('/logout', 'home.logout');
 };

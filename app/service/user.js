@@ -6,7 +6,6 @@ module.exports = app => {
   class UserService extends app.Service {
     * authUser({ name, password }) {
       const user = yield this.ctx.model.User.findOne({ name });
-      this.logger.info('user.pass = %s', user);
       if (user) {
         const hash = crypto.createHash('sha256');
         hash.update(password);
