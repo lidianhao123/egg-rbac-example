@@ -2,7 +2,7 @@
 
 example for egg-rbac plugin
 
-## [中文详细说明](./README.zh_CN.md)
+## [中文详细说明](./README.zh-CN.md)
 
 ## QuickStart
 
