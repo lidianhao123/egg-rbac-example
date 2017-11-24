@@ -2,11 +2,13 @@
 
 example for egg-rbac plugin
 
+## [中文详细说明](./README.zh_CN.md)
+
 ## QuickStart
 
 <!-- add docs here for user -->
 
-see [egg docs][egg] for more detail.
+see [egg-rbac][egg-rbac] for more detail.
 
 ### Development
 
@@ -16,18 +18,4 @@ $ npm run dev
 $ open http://localhost:7001/
 ```
 
-### Deploy
-
-```bash
-$ npm start
-$ npm stop
-```
-
-### npm scripts
-
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-- Use `npm run autod` to auto detect dependencies upgrade, see [autod](https://www.npmjs.com/package/autod) for more detail.
-
-
-[egg]: https://eggjs.org
+[egg-rbac]: https://github.com/lidianhao123/egg-rbac
