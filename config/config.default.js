@@ -36,15 +36,6 @@ module.exports = appInfo => {
     options: {},
   };
 
-  config.redis = {
-    client: {
-      port: 6379, // Redis port
-      host: '127.0.0.1', // Redis host
-      password: null,
-      db: 0,
-    },
-  };
-
   config.rbac = {
     initOnStart: true, // default false
     /**
@@ -52,7 +43,7 @@ module.exports = appInfo => {
      * @return {object} promise, if resolve data is falsy, no role
      */
     * getRoleName(ctx) {
-      if (ctx.session.roleName) {
+      if (ctx.session.user && ctx.session.user.role.name) {
         return Promise.resolve(ctx.session.user.role.name);
       }
       return Promise.resolve('');
@@ -60,7 +51,7 @@ module.exports = appInfo => {
   };
 
   config.nav = [
-    { id: 1, name: '文章管理', link: '/admin/article', iconName: 'glyphicon-th-list' },
+    { id: 1, name: '文章管理', link: '/admin', iconName: 'glyphicon-th-list' },
     { id: 2, name: '标签管理', link: '/admin/tag', iconName: 'glyphicon-tags' },
     { id: 3, name: '收藏管理', link: '/admin/collect', iconName: 'glyphicon-heart' },
     { id: 4, name: '用户管理', link: '/admin/user', iconName: 'glyphicon-user' },

@@ -6,9 +6,7 @@
   "dependencies": {
     "egg": "^1.9.0",
     "egg-mongoose": "^2.1.1",
-    "egg-redis": "^1.0.2",
     "egg-scripts": "^2.1.0",
-    "egg-session-redis": "^1.0.0",
     "egg-validate": "^1.0.0",
     "egg-view-ejs": "^1.1.0"
   },
