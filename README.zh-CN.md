@@ -78,14 +78,14 @@ app.rbac 对象上面有通用方法用于创建角色、修改角色权限
 例子：
 ```js
 //{app_root/app/controller/home.js}
-const role = yield app.rbac.newRole({ name: body.name, alias: body.alias, grants: [] });
+const role = await app.rbac.newRole({ name: body.name, alias: body.alias, grants: [] });
 ```
 ```js
 if (body.removeArr && body.removeArr.length > 0) {
-  yield app.rbac.removePermissions(body.id, body.removeArr);
+  await app.rbac.removePermissions(body.id, body.removeArr);
 }
 if (body.addArr && body.addArr.length > 0) {
-  yield app.rbac.addPermission(body.id, body.addArr);
+  await app.rbac.addPermission(body.id, body.addArr);
 }
 ```
 

@@ -6,21 +6,21 @@
  * @return {function} generate function
  */
 function can(isAPI) {
-  return function* (next) {
-    console.info(this.request.url);
+  return async function(ctx, next) {
+    console.info(ctx.request.url);
     // this is instance of Context
-    if (this.role && this.role.can && this.role.can(this.request.url)) {
-      yield next;
+    if (ctx.role && ctx.role.can && ctx.role.can(ctx.request.url)) {
+      await next();
     } else {
       // https://tools.ietf.org/html/rfc2616#page-66
-      // this.status = 401; // 'Unauthorized'
+      // ctx.status = 401; // 'Unauthorized'
       if (isAPI) {
-        this.body = {
+        ctx.body = {
           code: 401,
           msg: 'no permission',
         };
       } else {
-        this.redirect('/login');
+        ctx.redirect('/login');
       }
     }
   };

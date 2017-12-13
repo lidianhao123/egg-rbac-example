@@ -1,32 +1,38 @@
 {
   "name": "egg-rbac-example",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "example for egg-rbac plugin",
   "private": true,
   "dependencies": {
-    "egg": "^1.9.0",
+    "btoa": "^1.1.2",
+    "egg": "^2.0.0",
     "egg-mongoose": "^2.1.1",
-    "egg-rbac": "^0.3.0",
-    "egg-scripts": "^2.1.0",
+    "egg-rbac": "^0.4.0",
+    "egg-scripts": "^2.4.0",
     "egg-validate": "^1.0.0",
-    "egg-view-ejs": "^1.1.0"
+    "egg-view-ejs": "^2.0.0",
+    "glob": "^7.1.2",
+    "load-grunt-tasks": "^3.5.2",
+    "npm-shrinkwrap": "^6.1.0",
+    "remarkable": "^1.7.1",
+    "time-grunt": "^1.4.0"
   },
   "devDependencies": {
-    "autod": "^2.10.0",
-    "autod-egg": "^1.0.0",
-    "egg-bin": "^4.3.5",
+    "autod": "^3.0.1",
+    "autod-egg": "^1.1.0",
+    "egg-bin": "^4.3.6",
     "egg-ci": "^1.8.0",
-    "egg-mock": "^3.13.0",
-    "eslint": "^4.10.0",
-    "eslint-config-egg": "^5.1.0",
+    "egg-mock": "^3.14.0",
+    "eslint": "^4.13.1",
+    "eslint-config-egg": "^5.1.1",
     "webstorm-disable-index": "^1.2.0"
   },
   "engines": {
     "node": ">=8.9.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon",
-    "stop": "egg-scripts stop",
+    "start": "egg-scripts start --daemon --title egg-rbac-example",
+    "stop": "egg-scripts stop --title egg-rbac-example",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
