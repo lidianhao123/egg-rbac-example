@@ -29,7 +29,7 @@ exports.rbac = {
      * @param {object} ctx - egg context object
      * @return {object} promise, if resolve data is falsy, no role
      */
-    * getRoleName(ctx) {
+    async getRoleName(ctx) {
       if (ctx.session.user && ctx.session.user.role.name) {
         return Promise.resolve(ctx.session.user.role.name);
       }
